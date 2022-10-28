@@ -1,0 +1,5 @@
+## Serializtion Formats
+convert object to JSON, YAML, XML
+product model -> serialize it to JSON -> served through the rest API
+
+
