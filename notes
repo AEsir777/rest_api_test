@@ -1,5 +1,15 @@
-## Serializtion Formats
+1. Product Serializer
 convert object to JSON, YAML, XML
 product model -> serialize it to JSON -> served through the rest API
 
+- import using the JSONRenderer
+  from rest_framework.renderers import JSON Renderer
+  renderer = JSONRenderer()
+  print(renderer.render(data))
+
+2. List API View
+Django REST Framework GEeneric Views
+- ListAPIView                 - RetrieveUpdateDestroyAPIView
+- CreateAPIView
+- DestoryAPIView
 
