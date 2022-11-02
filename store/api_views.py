@@ -1,10 +1,13 @@
+from itertools import product
 from rest_framework.exceptions import ValidationError
-from rest_framework.generics import ListAPIView, CreateAPIView, DestroyAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView, DestroyAPIView, \
+     RetrieveUpdateDestroyAPIView, GenericAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
 from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.response import Response
 
-from store.serializers import ProductSerializer
+from store.serializers import ProductSerializer, ProductStatSerializer
 from store.models import Product
 
 class ProductsPagination(LimitOffsetPagination):
@@ -48,6 +51,43 @@ class ProductCreateAPIView(CreateAPIView):
         return super().create(request, *args, **kwargs)
 
 
-""" class ProductDestroyAPIView(DestroyAPIView):
-    serializer_class = Pr
- """
+class ProductRUDAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = Product.objects.all()
+    lookup_field = 'id'
+    serializer_class = ProductSerializer
+
+    def delete(self, request, *args, **kwargs):
+        product_id = request.data.get('id')
+        response = super().delete(request, *args, **kwargs)
+        if response.status_code == 204:
+            from django.core.cache import cache
+            cache.delete('product_data_{}'.format(product_id))
+        return response
+
+    def update(self, request, *args, **kwargs):
+        response = super().update(request, *args, **kwargs)
+        if response.status_code == 200:
+            from django.core.cache import cache
+            product = response.data
+            cache.delete('product_data_{}'.format(product['id'])), {
+                'name': product['name'],
+                'description': product['description'],
+                'price': product['price'],
+            }
+        return response
+
+class ProductStatsAPIView(GenericAPIView):
+    lookup_field = 'id'
+    serializer_class = ProductStatSerializer
+    queryset = Product.objects.all()
+
+    def get(self, request, format=None, id=None):
+        obj = self.get_object()
+        serializer = ProductStatSerializer({
+            'stats': {
+                '2019-01-01': [5, 10, 15],
+                '2019-01-02': [20, 1, 1],
+                '34234': [43424234]
+            }
+        })
+        return Response(serializer.data)

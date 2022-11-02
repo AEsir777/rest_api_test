@@ -24,3 +24,26 @@ data source -> imported through REST API -> Populating the Database
 curl -X POST http://127.0.0.1:8000/api/example1/new -d price=1.34 -d name='Product uploaded via API' -d description='a product'
 
 ## DestroyAPIView
+curl -X DELETE http://127.0.0.1:8000/api/example1/5/delete
+
+## RetriveAPIView
+GET
+# UpdateAPIView
+PUT PATCH
+
+RetriveUpdateDestroyAPIView
+- one URL can handle multiple HTTP methods
+
+# serializer
+import json
+from store.models import *
+from store.serializers import *
+product = Product.objects.all().first()
+cart = ShoppingCart()
+cart.save()
+item = ShoppingCartItem(shopping_cart=cart, product=product, quantity=5)
+item.save()
+serializer = ProductSerializer(product)
+print(json.dumps(serializer.data, indent=2))
+
+# 
