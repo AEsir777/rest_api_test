@@ -46,4 +46,12 @@ item.save()
 serializer = ProductSerializer(product)
 print(json.dumps(serializer.data, indent=2))
 
-# 
+# test
+python manage.py test
+1. APISimpleTestCase
+2. APITransactionTestCase
+3. APITestCase
+4. APILiveServerTestCase
+
+- implement the same interface as Django's TestCase class
+- use JSON format when testing API client requests: self.client.post(url, data, format='json')
